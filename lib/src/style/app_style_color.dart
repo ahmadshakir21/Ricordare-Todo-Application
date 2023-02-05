@@ -6,3 +6,5 @@ Color secondColor = const Color(0xFF7A69FE);
 Color secondColorLight = const Color(0xFF8272FE);
 Color thirdColor = const Color(0xFF0B0249);
 Color thirdColorLight = const Color(0xFF1A1254);
+
+Color orangeColor = const Color(0xFFFFB62D);
