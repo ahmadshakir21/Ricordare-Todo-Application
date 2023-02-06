@@ -132,11 +132,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       .textTheme
                       .headline6!
                       .copyWith(color: mainColor),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = widget.onClickToSignIn,
                   children: <TextSpan>[
                     TextSpan(
                         text: ' Sign in',
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = widget.onClickToSignIn,
                         style: Theme.of(context).textTheme.headline6!.copyWith(
                             fontWeight: FontWeight.w600, color: orangeColor)),
                   ]),

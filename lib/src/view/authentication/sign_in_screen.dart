@@ -1,3 +1,5 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_application/src/style/app_style_color.dart';
@@ -42,6 +44,38 @@ class _SignInScreenState extends State<SignInScreen> {
         ),
       ),
     );
+  }
+
+  Future signIn() async {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: emailController.text.trim(),
+          password: passwordController.text.trim());
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        AwesomeDialog(
+          context: context,
+          dialogType: DialogType.error,
+          title: 'Authentication Error',
+          desc: 'No user found for that email.',
+          btnOkOnPress: () {},
+          btnOkColor: Colors.red,
+        )..show();
+        print('No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        AwesomeDialog(
+          context: context,
+          dialogType: DialogType.error,
+          title: 'Authentication Error',
+          desc: 'Wrong password provided for that user.',
+          btnOkOnPress: () {},
+          btnOkColor: Colors.red,
+        )..show();
+        print('Wrong password provided for that user.');
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -107,7 +141,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 width: width * 1,
                 height: height * 0.05,
                 child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: signIn,
                     style: ElevatedButton.styleFrom(
                         shape: const StadiumBorder(), primary: orangeColor),
                     child: Text(
@@ -120,11 +154,11 @@ class _SignInScreenState extends State<SignInScreen> {
               text: TextSpan(
                   text: 'Do not have an Account?',
                   style: Theme.of(context).textTheme.headline6,
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = widget.onClickToSignUp,
                   children: <TextSpan>[
                     TextSpan(
                         text: ' Sign up',
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = widget.onClickToSignUp,
                         style: Theme.of(context).textTheme.headline6!.copyWith(
                             fontWeight: FontWeight.w600, color: secondColor)),
                   ]),

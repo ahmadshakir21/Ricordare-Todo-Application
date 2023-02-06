@@ -74,7 +74,7 @@ class ToSignInScreen extends StatelessWidget {
                 )),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 85),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 75),
             child: SizedBox(
               width: width * 1,
               height: height * 0.05,
