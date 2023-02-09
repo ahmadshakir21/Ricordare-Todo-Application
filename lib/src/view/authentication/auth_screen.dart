@@ -11,14 +11,14 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> {
   bool isSignIn = true;
+  void toggle() {
+    setState(() {
+      isSignIn = !isSignIn;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    void toggle() {
-      setState(() {
-        isSignIn = !isSignIn;
-      });
-    }
-
     return isSignIn
         ? SignInScreen(onClickToSignUp: toggle)
         : SignUpScreen(
