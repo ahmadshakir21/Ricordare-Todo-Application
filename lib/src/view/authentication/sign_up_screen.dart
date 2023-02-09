@@ -2,7 +2,9 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:todo_application/main.dart';
+import 'package:todo_application/src/provider/auth_provider.dart';
 import 'package:todo_application/src/style/app_style_color.dart';
 import 'package:todo_application/src/view/home_screen.dart';
 
@@ -63,48 +65,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
   }
 
-  Future signUp() async {
-    try {
-      final isvalid = formKey.currentState!.validate();
-      if (!isvalid) return;
-      if (confirmPasswordFunction()) {
-        await FirebaseAuth.instance
-            .createUserWithEmailAndPassword(
-                email: emailController.text.trim(),
-                password: passwordController.text.trim())
-            .then((value) => Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => HomeScreen(),
-                )));
-      }
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'weak-password') {
-        AwesomeDialog(
-          context: context,
-          dialogType: DialogType.error,
-          title: 'Authentication Error',
-          desc: 'The password provided is too weak.',
-          btnOkOnPress: () {},
-          btnOkColor: Colors.red,
-        )..show();
-        print('The password provided is too weak.');
-      } else if (e.code == 'email-already-in-use') {
-        AwesomeDialog(
-          context: context,
-          dialogType: DialogType.error,
-          title: 'Authentication Error',
-          desc: 'The account already exists for that email.',
-          btnOkOnPress: () {},
-          btnOkColor: Colors.red,
-        )..show();
-        print('The account already exists for that email.');
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -195,7 +158,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   width: width * 1,
                   height: height * 0.05,
                   child: ElevatedButton(
-                      onPressed: signUp,
+                      onPressed: () async {
+                        final output = await authProvider.signUp(
+                          emailController,
+                          passwordController,
+                          formKey,
+                          context,
+                          confirmPasswordFunction(),
+                        );
+
+                        if (output == null) {
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                              builder: (context) => HomeScreen(),
+                            ),
+                          );
+                        }
+                      },
                       style: ElevatedButton.styleFrom(
                           shape: const StadiumBorder(), primary: orangeColor),
                       child: Text(
