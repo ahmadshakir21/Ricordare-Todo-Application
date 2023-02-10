@@ -3,12 +3,12 @@ import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:todo_application/src/style/app_style_color.dart';
 
-class AddNote extends StatefulWidget {
+class UpdateNote extends StatefulWidget {
   @override
-  State<AddNote> createState() => _AddNoteState();
+  State<UpdateNote> createState() => _UpdateNoteState();
 }
 
-class _AddNoteState extends State<AddNote> {
+class _UpdateNoteState extends State<UpdateNote> {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController todoController = TextEditingController();
 
@@ -62,20 +62,22 @@ class _AddNoteState extends State<AddNote> {
             height: height * 0.01,
           ),
           IconButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              icon: Icon(
-                Icons.arrow_back_rounded,
-                color: thirdColor,
-              )),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            icon: Icon(
+              Icons.arrow_back_rounded,
+              color: thirdColor,
+            ),
+            iconSize: 28,
+          ),
           SizedBox(
             height: height * 0.05,
           ),
           textFieldFunction(
               width: width,
               maxLine: 1,
-              hintText: 'Title',
+              hintText: 'Task Name',
               controller: titleController),
           SizedBox(
             height: height * 0.04,
@@ -83,7 +85,7 @@ class _AddNoteState extends State<AddNote> {
           textFieldFunction(
               width: width,
               maxLine: 7,
-              hintText: 'Todo',
+              hintText: 'Task Description',
               controller: todoController),
         ]),
       ),
@@ -95,7 +97,10 @@ class _AddNoteState extends State<AddNote> {
           backgroundColor: orangeColor,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
-          child: const Text('SAVE'),
+          child: Text(
+            'SAVE',
+            style: Theme.of(context).textTheme.headline5,
+          ),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

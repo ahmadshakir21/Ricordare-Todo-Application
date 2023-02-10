@@ -1,6 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:todo_application/src/model/user_todo_model.dart';
+import 'package:todo_application/src/service/cloud_firestore.dart';
 import 'package:todo_application/src/style/app_style_color.dart';
 
 class AddNote extends StatefulWidget {
@@ -9,13 +13,14 @@ class AddNote extends StatefulWidget {
 }
 
 class _AddNoteState extends State<AddNote> {
-  final TextEditingController titleController = TextEditingController();
-  final TextEditingController todoController = TextEditingController();
+  final TextEditingController taskNameController = TextEditingController();
+  final TextEditingController taskDescriptionController =
+      TextEditingController();
 
   @override
   void dispose() {
-    titleController.dispose();
-    todoController.dispose();
+    taskNameController.dispose();
+    taskDescriptionController.dispose();
     super.dispose();
   }
 
@@ -62,40 +67,50 @@ class _AddNoteState extends State<AddNote> {
             height: height * 0.01,
           ),
           IconButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              icon: Icon(
-                Icons.arrow_back_rounded,
-                color: thirdColor,
-              )),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            icon: Icon(
+              Icons.arrow_back_rounded,
+              color: thirdColor,
+            ),
+            iconSize: 28,
+          ),
           SizedBox(
             height: height * 0.05,
           ),
           textFieldFunction(
               width: width,
               maxLine: 1,
-              hintText: 'Title',
-              controller: titleController),
+              hintText: 'Task Name',
+              controller: taskNameController),
           SizedBox(
             height: height * 0.04,
           ),
           textFieldFunction(
               width: width,
               maxLine: 7,
-              hintText: 'Todo',
-              controller: todoController),
+              hintText: 'Task Description',
+              controller: taskDescriptionController),
         ]),
       ),
       floatingActionButton: SizedBox(
         width: width * 0.8,
         height: height * 0.05,
         child: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () {
+            CloudFirestore.create(UserTodoModel(
+              taskName: taskNameController.text,
+              taskDescription: taskDescriptionController.text,
+            ));
+          },
           backgroundColor: orangeColor,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
-          child: const Text('ADD TODO'),
+          child: Text(
+            'ADD TODO',
+            style: Theme.of(context).textTheme.headline5,
+          ),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

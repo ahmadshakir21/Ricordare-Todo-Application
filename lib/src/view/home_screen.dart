@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:todo_application/src/style/app_style_color.dart';
 import 'package:todo_application/src/view/add_note.dart';
 import 'package:todo_application/src/view/authentication/to_sign_in_screen.dart';
+import 'package:todo_application/src/view/update_note.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -16,12 +17,32 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: mainColor,
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.all(10),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [],
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: height * 0.01,
+            ),
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.menu_rounded),
+              iconSize: 28,
+              color: thirdColor,
+            ),
+            SizedBox(
+              height: height * 0.025,
+            ),
+            Container(
+              height: height * 0.8,
+              color: Colors.red,
+            ),
+          ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
