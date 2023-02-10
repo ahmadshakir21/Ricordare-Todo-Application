@@ -4,7 +4,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
-import 'package:todo_application/src/provider/auth_provider.dart';
 import 'package:todo_application/src/style/app_style_color.dart';
 import 'package:todo_application/src/view/home_screen.dart';
 
@@ -53,9 +52,45 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
+  Future signIn() async {
+    try {
+      final isValid = formKey.currentState!.validate();
+      if (!isValid) return;
+      await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
+              email: emailController.text.trim(),
+              password: passwordController.text.trim())
+          .then((value) => Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => HomeScreen(),
+              )));
+      return null;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        AwesomeDialog(
+          context: context,
+          dialogType: DialogType.error,
+          title: 'Authentication Error',
+          desc: 'No user found for that email.',
+          btnOkOnPress: () {},
+          btnOkColor: Colors.red,
+        )..show();
+      } else if (e.code == 'wrong-password') {
+        AwesomeDialog(
+          context: context,
+          dialogType: DialogType.error,
+          title: 'Authentication Error',
+          desc: 'Wrong password provided for that user.',
+          btnOkOnPress: () {},
+          btnOkColor: Colors.red,
+        )..show();
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -134,22 +169,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   width: width * 1,
                   height: height * 0.05,
                   child: ElevatedButton(
-                      onPressed: () async {
-                        final output = await authProvider.signIn(
-                          emailController,
-                          passwordController,
-                          formKey,
-                          context,
-                        );
-
-                        if (output == null) {
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(
-                              builder: (context) => HomeScreen(),
-                            ),
-                          );
-                        }
-                      },
+                      onPressed: signIn,
                       style: ElevatedButton.styleFrom(
                           shape: const StadiumBorder(), primary: orangeColor),
                       child: Text(

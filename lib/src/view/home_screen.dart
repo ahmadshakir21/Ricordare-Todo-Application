@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:todo_application/src/provider/auth_provider.dart';
 import 'package:todo_application/src/style/app_style_color.dart';
 import 'package:todo_application/src/view/authentication/to_sign_in_screen.dart';
 
@@ -11,8 +10,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // final user = FirebaseAuth.instance.currentUser!;
-  // final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final user = FirebaseAuth.instance.currentUser!;
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -24,12 +23,10 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             ElevatedButton(
                 onPressed: () async {
-                  await context.read<AuthProvider>().logout().then((_) =>
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const ToSignInScreen()),
-                          (route) => false));
+                  _firebaseAuth.signOut().then(
+                      (value) => Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => ToSignInScreen(),
+                          )));
                 },
                 child: const Text("Log out"))
           ],
