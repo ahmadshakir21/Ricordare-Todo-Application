@@ -98,12 +98,7 @@ class _AddNoteState extends State<AddNote> {
         width: width * 0.8,
         height: height * 0.05,
         child: FloatingActionButton(
-          onPressed: () {
-            CloudFirestore.create(UserTodoModel(
-              taskName: taskNameController.text,
-              taskDescription: taskDescriptionController.text,
-            ));
-          },
+          onPressed: () {},
           backgroundColor: orangeColor,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),

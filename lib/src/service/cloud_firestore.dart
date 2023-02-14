@@ -4,16 +4,16 @@ import 'package:todo_application/src/model/user_todo_model.dart';
 
 class CloudFirestore {
   static Future create(UserTodoModel userTodoModel) async {
-    final userCollection = FirebaseFirestore.instance.collection('user_task');
+    final userCollection = FirebaseFirestore.instance.collection('user');
 
     final uid = userCollection.doc().id;
     final docRef = userCollection.doc(uid);
 
     final newUserTodo = UserTodoModel(
-      id: uid,
+      userId: uid,
+      name: userTodoModel.name,
+      image: userTodoModel.image,
       email: userTodoModel.email,
-      taskName: userTodoModel.taskName,
-      taskDescription: userTodoModel.taskDescription,
     ).toMap();
 
     try {
@@ -21,5 +21,34 @@ class CloudFirestore {
     } catch (e) {
       print("some error occured $e");
     }
+  }
+
+  static Stream<List<UserTodoModel>> read() {
+    final userCollection = FirebaseFirestore.instance.collection('user');
+
+    return userCollection.snapshots().map((querySnapshot) =>
+        querySnapshot.docs.map((e) => UserTodoModel.fromMap(e)).toList());
+  }
+
+  static Future update(UserTodoModel userTodoModel) async {
+    final userCollection = FirebaseFirestore.instance.collection('user');
+
+    final docRef = userCollection.doc(userTodoModel.userId);
+
+    final newUserTodoUpdate = UserTodoModel(
+      userId: userTodoModel.userId,
+    ).toMap();
+
+    try {
+      await docRef.update(newUserTodoUpdate);
+    } catch (e) {
+      print("some error occured $e");
+    }
+  }
+
+  static Future delete(UserTodoModel userTodoModel) async {
+    final userCollection = FirebaseFirestore.instance.collection('user');
+
+    final docRef = userCollection.doc(userTodoModel.userId).delete();
   }
 }

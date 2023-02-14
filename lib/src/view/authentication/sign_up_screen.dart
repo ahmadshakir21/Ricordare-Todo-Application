@@ -1,9 +1,11 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_application/main.dart';
+import 'package:todo_application/src/model/user_todo_model.dart';
 import 'package:todo_application/src/style/app_style_color.dart';
 import 'package:todo_application/src/view/home_screen.dart';
 
@@ -18,6 +20,7 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final formKey = GlobalKey<FormState>();
+  final TextEditingController usernameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
@@ -64,6 +67,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
   }
 
+  sendInfoToCloudFirestore() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    UserTodoModel userTodoModel = UserTodoModel();
+    userTodoModel.userId = user?.uid;
+    userTodoModel.name = usernameController.text;
+    userTodoModel.email = user?.email;
+    userTodoModel.image = '';
+
+    await FirebaseFirestore.instance
+        .collection('user')
+        .doc(user?.uid)
+        .set(userTodoModel.toMap());
+  }
+
   Future signUp() async {
     try {
       final isvalid = formKey.currentState!.validate();
@@ -73,6 +90,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             .createUserWithEmailAndPassword(
                 email: emailController.text.trim(),
                 password: passwordController.text.trim())
+            .then((value) => sendInfoToCloudFirestore())
             .then((value) => Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => HomeScreen(),
                 )));
@@ -156,6 +174,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
                   child: Column(
                     children: [
+                      textFieldWidget(usernameController, (value) {
+                        RegExp regex = RegExp(r'^.{5,}$');
+                        if (value!.isEmpty) {
+                          return ("Username cannot be Empty");
+                        }
+                        if (!regex.hasMatch(value)) {
+                          return ("Enter Valid name(Min. 5 Character)");
+                        }
+                        return null;
+                      }, 'UserName', false),
+                      SizedBox(
+                        height: height * 0.02,
+                      ),
                       textFieldWidget(emailController, (value) {
                         if (value!.isEmpty ||
                             !RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w]{2,4}')
@@ -166,7 +197,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         }
                       }, 'Email Address', false),
                       SizedBox(
-                        height: height * 0.03,
+                        height: height * 0.02,
                       ),
                       textFieldWidget(passwordController, (value) {
                         if (value != null && value.length < 6) {
@@ -176,7 +207,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         }
                       }, 'Password', true),
                       SizedBox(
-                        height: height * 0.03,
+                        height: height * 0.02,
                       ),
                       textFieldWidget(confirmPasswordController, (value) {
                         if (value != null && value.length < 6) {
@@ -224,6 +255,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   fontWeight: FontWeight.w600,
                                   color: orangeColor)),
                     ]),
+              ),
+              SizedBox(
+                height: height * 0.02,
               ),
             ],
           ),

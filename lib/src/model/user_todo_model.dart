@@ -1,24 +1,24 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserTodoModel {
-  final String? id;
-  final String? email;
-  final String taskName;
-  final String taskDescription;
+  String? userId;
+  String? name;
+  String? image;
+  String? email;
 
   UserTodoModel({
-    this.id,
+    this.userId,
+    this.name,
+    this.image,
     this.email,
-    required this.taskName,
-    required this.taskDescription,
   });
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
+      'userId': userId,
+      'name': name,
+      'image': image,
       'email': email,
-      'taskName': taskName,
-      'taskDescription': taskDescription,
     };
   }
 
@@ -26,10 +26,10 @@ class UserTodoModel {
     var snapshot = snap.data() as Map<String, dynamic>;
 
     return UserTodoModel(
-      id: snapshot['id'],
+      userId: snapshot['userId'],
+      name: snapshot['name'],
+      image: snapshot['image'],
       email: snapshot['email'],
-      taskName: snapshot['taskName'],
-      taskDescription: snapshot['taskDescription'],
     );
   }
 }
