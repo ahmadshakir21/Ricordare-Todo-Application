@@ -1,8 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+// import 'package:fluttertoast/fluttertoast.dart';
+import 'package:todo_application/src/model/task_model.dart';
 import 'package:todo_application/src/model/user_todo_model.dart';
 import 'package:todo_application/src/service/cloud_firestore.dart';
 import 'package:todo_application/src/style/app_style_color.dart';
@@ -22,6 +25,29 @@ class _AddNoteState extends State<AddNote> {
     taskNameController.dispose();
     taskDescriptionController.dispose();
     super.dispose();
+  }
+
+  addTaskToFirebase() async {
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    User? user = firebaseAuth.currentUser;
+    String uid = user!.uid;
+    var time = DateTime.now();
+
+    await FirebaseFirestore.instance
+        .collection('tasks')
+        .doc(uid)
+        .collection('myTasks')
+        .doc(time.toString())
+        .set(TaskModel(
+                title: taskNameController.text,
+                description: taskDescriptionController.text,
+                time: time.toString())
+            .toMap());
+    // Fluttertoast.showToast(
+    //   msg: 'Successfully, you added your task',
+    //   backgroundColor: secondColorLight,
+    //   gravity: ToastGravity.CENTER,
+    // );
   }
 
   Widget textFieldFunction(
@@ -98,7 +124,9 @@ class _AddNoteState extends State<AddNote> {
         width: width * 0.8,
         height: height * 0.05,
         child: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () {
+            addTaskToFirebase();
+          },
           backgroundColor: orangeColor,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
