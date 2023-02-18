@@ -4,7 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
-// import 'package:fluttertoast/fluttertoast.dart';
+
 import 'package:todo_application/src/model/task_model.dart';
 import 'package:todo_application/src/model/user_todo_model.dart';
 import 'package:todo_application/src/service/cloud_firestore.dart';
@@ -43,11 +43,13 @@ class _AddNoteState extends State<AddNote> {
                 description: taskDescriptionController.text,
                 time: time.toString())
             .toMap());
-    // Fluttertoast.showToast(
-    //   msg: 'Successfully, you added your task',
-    //   backgroundColor: secondColorLight,
-    //   gravity: ToastGravity.CENTER,
-    // );
+
+    var snackBar = SnackBar(
+      content: Text('Successfully, You added your task'),
+      backgroundColor: secondColorLight,
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   Widget textFieldFunction(
@@ -85,58 +87,61 @@ class _AddNoteState extends State<AddNote> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          SizedBox(
-            height: height * 0.01,
-          ),
-          IconButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            icon: Icon(
-              Icons.arrow_back_rounded,
-              color: thirdColor,
+    return SafeArea(
+      child: Scaffold(
+        body: Padding(
+          padding: const EdgeInsets.all(10),
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            SizedBox(
+              height: height * 0.01,
             ),
-            iconSize: 28,
-          ),
-          SizedBox(
-            height: height * 0.05,
-          ),
-          textFieldFunction(
-              width: width,
-              maxLine: 1,
-              hintText: 'Task Name',
-              controller: taskNameController),
-          SizedBox(
-            height: height * 0.04,
-          ),
-          textFieldFunction(
-              width: width,
-              maxLine: 7,
-              hintText: 'Task Description',
-              controller: taskDescriptionController),
-        ]),
-      ),
-      floatingActionButton: SizedBox(
-        width: width * 0.8,
-        height: height * 0.05,
-        child: FloatingActionButton(
-          onPressed: () {
-            addTaskToFirebase();
-          },
-          backgroundColor: orangeColor,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
-          child: Text(
-            'ADD TODO',
-            style: Theme.of(context).textTheme.headline5,
+            IconButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              icon: Icon(
+                Icons.arrow_back_rounded,
+                color: thirdColor,
+              ),
+              iconSize: 28,
+            ),
+            SizedBox(
+              height: height * 0.03,
+            ),
+            textFieldFunction(
+                width: width,
+                maxLine: 1,
+                hintText: 'Task Name',
+                controller: taskNameController),
+            SizedBox(
+              height: height * 0.04,
+            ),
+            textFieldFunction(
+                width: width,
+                maxLine: 7,
+                hintText: 'Task Description',
+                controller: taskDescriptionController),
+          ]),
+        ),
+        floatingActionButton: SizedBox(
+          width: width * 0.8,
+          height: height * 0.05,
+          child: FloatingActionButton(
+            onPressed: () {
+              addTaskToFirebase();
+            },
+            backgroundColor: orangeColor,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(100)),
+            child: Text(
+              'ADD TODO',
+              style: Theme.of(context).textTheme.headline5,
+            ),
           ),
         ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }

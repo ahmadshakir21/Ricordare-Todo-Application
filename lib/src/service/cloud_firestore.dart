@@ -3,25 +3,25 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:todo_application/src/model/user_todo_model.dart';
 
 class CloudFirestore {
-  static Future create(UserTodoModel userTodoModel) async {
-    final userCollection = FirebaseFirestore.instance.collection('user');
+  // static Future create(UserTodoModel userTodoModel) async {
+  //   final userCollection = FirebaseFirestore.instance.collection('user');
 
-    final uid = userCollection.doc().id;
-    final docRef = userCollection.doc(uid);
+  //   final uid = userCollection.doc().id;
+  //   final docRef = userCollection.doc(uid);
 
-    final newUserTodo = UserTodoModel(
-      userId: uid,
-      name: userTodoModel.name,
-      image: userTodoModel.image,
-      email: userTodoModel.email,
-    ).toMap();
+  //   final newUserTodo = UserTodoModel(
+  //     userId: uid,
+  //     name: userTodoModel.name,
+  //     image: userTodoModel.image,
+  //     email: userTodoModel.email,
+  //   ).toMap();
 
-    try {
-      await docRef.set(newUserTodo);
-    } catch (e) {
-      print("some error occured $e");
-    }
-  }
+  //   try {
+  //     await docRef.set(newUserTodo);
+  //   } catch (e) {
+  //     print("some error occured $e");
+  //   }
+  // }
 
   static Stream<List<UserTodoModel>> read() {
     final userCollection = FirebaseFirestore.instance.collection('user');
