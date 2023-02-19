@@ -71,104 +71,102 @@ class _HomeScreenState extends State<HomeScreen> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return SafeArea(
-      child: Scaffold(
-        key: _key,
-        backgroundColor: mainColor,
-        drawer: Drawer(
-            child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            Container(
-              color: secondColor,
-              width: double.infinity,
-              height: height * 0.25,
-              padding: const EdgeInsets.only(top: 20),
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 10),
-                      height: height * 0.13,
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle, color: mainColor),
-                    ),
-                    // Text(userTodoModel.name!),
-                    // Text(userTodoModel.email!),
-                  ]),
-            ),
-            myDrawerList()
-          ],
-        )),
-        body: StreamBuilder<List<TaskModel>>(
-          stream: FirebaseFirestore.instance
-              .collection('tasks')
-              .doc(user.uid)
-              .collection('myTasks')
-              .snapshots()
-              .map((querySnapshot) =>
-                  querySnapshot.docs.map((e) => TaskModel.fromMap(e)).toList()),
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            } else if (snapshot.hasError) {
-              return const Text(
-                "Error...",
-              );
-            } else if (snapshot.data == null) {
-              return const Text(
-                "Data is null",
-              );
-            }
+        child: Scaffold(
+      key: _key,
+      backgroundColor: mainColor,
+      drawer: Drawer(
+          child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          Container(
+            color: secondColor,
+            width: double.infinity,
+            height: height * 0.25,
+            padding: const EdgeInsets.only(top: 20),
+            child:
+                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Container(
+                margin: const EdgeInsets.only(bottom: 10),
+                height: height * 0.13,
+                decoration:
+                    BoxDecoration(shape: BoxShape.circle, color: mainColor),
+              ),
+              // Text(userTodoModel.name!),
+              // Text(userTodoModel.email!),
+            ]),
+          ),
+          myDrawerList()
+        ],
+      )),
+      body: Padding(
+          padding: const EdgeInsets.all(10),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: height * 0.01,
+                ),
+                IconButton(
+                  onPressed: () {
+                    _key.currentState!.openDrawer();
+                  },
+                  icon: const Icon(Icons.menu_rounded),
+                  iconSize: 28,
+                  color: thirdColor,
+                ),
+                SizedBox(
+                  height: height * 0.025,
+                ),
+                StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('tasks')
+                        .doc(user.uid)
+                        .collection('myTasks')
+                        .snapshots(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else if (snapshot.hasError) {
+                        return const Text(
+                          "Error...",
+                        );
+                      } else if (snapshot.data == null) {
+                        return const Text(
+                          "Data is null",
+                        );
+                      }
 
-            // final docs = snapshot.data!.documents;
-            // final doc = snapshot.data;
-            return Padding(
-                padding: const EdgeInsets.all(10),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: height * 0.01,
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          _key.currentState!.openDrawer();
-                        },
-                        icon: const Icon(Icons.menu_rounded),
-                        iconSize: 28,
-                        color: thirdColor,
-                      ),
-                      SizedBox(
-                        height: height * 0.025,
-                      ),
-                      Container(
+                      final myDocs = snapshot.data!.docs;
+
+                      return Container(
                         height: height * 0.8,
                         color: Colors.red,
                         child: ListView.builder(
-                          // itemCount: snapshot.data,
+                          itemCount: myDocs.length,
                           itemBuilder: (context, index) {
-                            return Container();
+                            return ListTile(
+                              title: Text(myDocs[index]),
+                            );
                           },
                         ),
-                      ),
-                    ],
-                  ),
-                ));
-          },
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => AddNote(),
-            ));
-          },
-          backgroundColor: orangeColor,
-          child: const Icon(Icons.add),
-        ),
+                      );
+                    }),
+              ],
+            ),
+          )),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => AddNote(),
+          ));
+        },
+        backgroundColor: orangeColor,
+        child: const Icon(Icons.add),
       ),
-    );
+    ));
   }
 }

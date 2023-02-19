@@ -183,7 +183,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           return ("Enter Valid name(Min. 5 Character)");
                         }
                         return null;
-                      }, 'UserName', false),
+                      }, 'Username', false),
                       SizedBox(
                         height: height * 0.02,
                       ),
