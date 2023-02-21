@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:intl/intl.dart';
 
 import 'package:todo_application/src/model/task_model.dart';
 import 'package:todo_application/src/model/user_todo_model.dart';
@@ -41,11 +42,11 @@ class _AddNoteState extends State<AddNote> {
         .set(TaskModel(
                 title: taskNameController.text,
                 description: taskDescriptionController.text,
-                time: time.toString())
+                time: DateFormat.yMMMEd().format(time))
             .toMap());
 
     var snackBar = SnackBar(
-      content: Text('Successfully, You added your task'),
+      content: const Text('Successfully, You added your task'),
       backgroundColor: secondColorLight,
     );
 
@@ -55,6 +56,7 @@ class _AddNoteState extends State<AddNote> {
   Widget textFieldFunction(
       {required double width,
       required int maxLine,
+      int? maxLength,
       required String hintText,
       required TextEditingController controller}) {
     return Center(
@@ -64,6 +66,7 @@ class _AddNoteState extends State<AddNote> {
               controller: controller,
               cursorColor: secondColor,
               maxLines: maxLine,
+              maxLength: maxLength,
               style: TextStyle(
                 color: thirdColor,
               ),
@@ -102,7 +105,7 @@ class _AddNoteState extends State<AddNote> {
               },
               icon: Icon(
                 Icons.arrow_back_rounded,
-                color: thirdColor,
+                color: secondColor,
               ),
               iconSize: 28,
             ),
@@ -112,6 +115,7 @@ class _AddNoteState extends State<AddNote> {
             textFieldFunction(
                 width: width,
                 maxLine: 1,
+                maxLength: 35,
                 hintText: 'Task Name',
                 controller: taskNameController),
             SizedBox(
@@ -131,7 +135,7 @@ class _AddNoteState extends State<AddNote> {
             onPressed: () {
               addTaskToFirebase();
             },
-            backgroundColor: orangeColor,
+            backgroundColor: secondColor,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(100)),
             child: Text(

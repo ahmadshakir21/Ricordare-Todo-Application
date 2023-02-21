@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_application/src/model/task_model.dart';
 import 'package:todo_application/src/model/user_todo_model.dart';
@@ -113,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                   icon: const Icon(Icons.menu_rounded),
                   iconSize: 28,
-                  color: thirdColor,
+                  color: secondColor,
                 ),
                 SizedBox(
                   height: height * 0.025,
@@ -131,12 +132,16 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: CircularProgressIndicator(),
                         );
                       } else if (snapshot.hasError) {
-                        return const Text(
-                          "Error...",
+                        return const Center(
+                          child: Text(
+                            "Error...",
+                          ),
                         );
                       } else if (snapshot.data == null) {
-                        return const Text(
-                          "Data is null",
+                        return const Center(
+                          child: Text(
+                            "Data is null",
+                          ),
                         );
                       }
 
@@ -144,12 +149,57 @@ class _HomeScreenState extends State<HomeScreen> {
 
                       return Container(
                         height: height * 0.8,
-                        color: Colors.red,
                         child: ListView.builder(
                           itemCount: myDocs.length,
                           itemBuilder: (context, index) {
-                            return ListTile(
-                              title: Text(myDocs[index]),
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: width * 1,
+                                  decoration: BoxDecoration(
+                                      color: orangeColor,
+                                      borderRadius: BorderRadius.circular(7)),
+                                  padding: const EdgeInsets.all(10),
+                                  margin: const EdgeInsets.all(10),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        myDocs[index]['title'],
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline6!
+                                            .copyWith(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600),
+                                      ),
+                                      SizedBox(
+                                        height: height * 0.01,
+                                      ),
+                                      Text(
+                                        myDocs[index]['time'],
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline6!
+                                            .copyWith(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w500),
+                                      ),
+                                      SizedBox(
+                                        height: height * 0.03,
+                                      ),
+                                      Text(
+                                        myDocs[index]['description'],
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline6!,
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ],
                             );
                           },
                         ),
@@ -164,7 +214,7 @@ class _HomeScreenState extends State<HomeScreen> {
             builder: (context) => AddNote(),
           ));
         },
-        backgroundColor: orangeColor,
+        backgroundColor: secondColor,
         child: const Icon(Icons.add),
       ),
     ));
