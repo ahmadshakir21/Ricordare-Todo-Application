@@ -10,6 +10,7 @@ import 'package:todo_application/src/style/app_style_color.dart';
 import 'package:todo_application/src/view/add_note.dart';
 import 'package:todo_application/src/view/authentication/to_sign_in_screen.dart';
 import 'package:todo_application/src/view/update_note.dart';
+import 'package:todo_application/src/widget/my_dialog.dart';
 import 'package:todo_application/src/widget/my_drawer_header.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -50,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Icon(
               iconData,
               size: 23,
-              color: secondColor,
+              color: thirdColor,
             )),
             Expanded(
                 flex: 3,
@@ -59,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: Theme.of(context)
                       .textTheme
                       .headline5!
-                      .copyWith(color: secondColor),
+                      .copyWith(color: thirdColor),
                 )),
           ]),
         ),
@@ -80,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
         padding: EdgeInsets.zero,
         children: [
           Container(
-            color: secondColor,
+            color: thirdColor,
             width: double.infinity,
             height: height * 0.25,
             padding: const EdgeInsets.only(top: 20),
@@ -114,7 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                   icon: const Icon(Icons.menu_rounded),
                   iconSize: 28,
-                  color: secondColor,
+                  color: thirdColor,
                 ),
                 SizedBox(
                   height: height * 0.025,
@@ -155,48 +156,103 @@ class _HomeScreenState extends State<HomeScreen> {
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Container(
-                                  width: width * 1,
-                                  decoration: BoxDecoration(
-                                      color: orangeColor,
-                                      borderRadius: BorderRadius.circular(7)),
-                                  padding: const EdgeInsets.all(10),
-                                  margin: const EdgeInsets.all(10),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        myDocs[index]['title'],
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headline6!
-                                            .copyWith(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w600),
-                                      ),
-                                      SizedBox(
-                                        height: height * 0.01,
-                                      ),
-                                      Text(
-                                        myDocs[index]['time'],
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headline6!
-                                            .copyWith(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w500),
-                                      ),
-                                      SizedBox(
-                                        height: height * 0.03,
-                                      ),
-                                      Text(
-                                        myDocs[index]['description'],
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headline6!,
-                                      )
-                                    ],
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                      builder: (context) => UpdateNote(),
+                                    ));
+                                  },
+                                  child: Container(
+                                    width: width * 1,
+                                    decoration: BoxDecoration(
+                                        color: thirdColorLight,
+                                        borderRadius: BorderRadius.circular(7)),
+                                    padding: const EdgeInsets.all(10),
+                                    margin: const EdgeInsets.all(10),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              myDocs[index]['title'],
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .headline6!
+                                                  .copyWith(
+                                                      color: mainColorLight,
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                            ),
+                                            IconButton(
+                                                onPressed: () {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (context) =>
+                                                        MyDialog(
+                                                      onPressed: () async {
+                                                        await FirebaseFirestore
+                                                            .instance
+                                                            .collection('tasks')
+                                                            .doc(user.uid)
+                                                            .collection(
+                                                                'myTasks')
+                                                            .doc(myDocs[index]
+                                                                ['taskID'])
+                                                            .delete()
+                                                            .then((value) =>
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop())
+                                                            .then((value) =>
+                                                                ScaffoldMessenger.of(
+                                                                        context)
+                                                                    .showSnackBar(
+                                                                        SnackBar(
+                                                                  content:
+                                                                      const Text(
+                                                                          'You deleted your task'),
+                                                                  backgroundColor:
+                                                                      thirdColorLight,
+                                                                )));
+                                                      },
+                                                    ),
+                                                  );
+                                                },
+                                                icon: Icon(
+                                                  Icons.delete,
+                                                  color: redColor,
+                                                )),
+                                          ],
+                                        ),
+                                        Text(
+                                          myDocs[index]['time'],
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headline6!
+                                              .copyWith(
+                                                  color: mainColorLight
+                                                      .withOpacity(0.75),
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w500),
+                                        ),
+                                        SizedBox(
+                                          height: height * 0.045,
+                                        ),
+                                        Text(
+                                          myDocs[index]['description'],
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headline6!
+                                              .copyWith(color: mainColorLight),
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ],
@@ -214,7 +270,7 @@ class _HomeScreenState extends State<HomeScreen> {
             builder: (context) => AddNote(),
           ));
         },
-        backgroundColor: secondColor,
+        backgroundColor: orangeColor,
         child: const Icon(Icons.add),
       ),
     ));

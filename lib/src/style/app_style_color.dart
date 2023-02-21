@@ -8,3 +8,5 @@ Color thirdColor = const Color(0xFF0B0249);
 Color thirdColorLight = const Color(0xFF1A1254);
 
 Color orangeColor = const Color(0xFFFFB62D);
+
+Color redColor = const Color.fromARGB(255, 240, 68, 99);

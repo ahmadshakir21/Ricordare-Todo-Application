@@ -22,6 +22,7 @@ class _UpdateNoteState extends State<UpdateNote> {
   Widget textFieldFunction(
       {required double width,
       required int maxLine,
+      int? maxLength,
       required String hintText,
       required TextEditingController controller}) {
     return Center(
@@ -29,21 +30,22 @@ class _UpdateNoteState extends State<UpdateNote> {
             width: width * 0.9,
             child: TextField(
               controller: controller,
-              cursorColor: secondColor,
+              cursorColor: thirdColor,
               maxLines: maxLine,
+              maxLength: maxLength,
               style: TextStyle(
                 color: thirdColor,
               ),
               decoration: InputDecoration(
                   hintText: hintText,
-                  hintStyle: TextStyle(color: secondColor.withOpacity(0.85)),
+                  hintStyle: TextStyle(color: thirdColor.withOpacity(0.65)),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: secondColor),
+                    borderSide: BorderSide(color: thirdColor),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: secondColor),
+                    borderSide: BorderSide(color: thirdColor),
                   ),
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10))),
@@ -54,56 +56,60 @@ class _UpdateNoteState extends State<UpdateNote> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          SizedBox(
-            height: height * 0.01,
-          ),
-          IconButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            icon: Icon(
-              Icons.arrow_back_rounded,
-              color: thirdColor,
+    return SafeArea(
+      child: Scaffold(
+        body: Padding(
+          padding: const EdgeInsets.all(10),
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            SizedBox(
+              height: height * 0.01,
             ),
-            iconSize: 28,
-          ),
-          SizedBox(
-            height: height * 0.05,
-          ),
-          textFieldFunction(
-              width: width,
-              maxLine: 1,
-              hintText: 'Task Name',
-              controller: titleController),
-          SizedBox(
-            height: height * 0.04,
-          ),
-          textFieldFunction(
-              width: width,
-              maxLine: 7,
-              hintText: 'Task Description',
-              controller: todoController),
-        ]),
-      ),
-      floatingActionButton: SizedBox(
-        width: width * 0.8,
-        height: height * 0.05,
-        child: FloatingActionButton(
-          onPressed: () {},
-          backgroundColor: orangeColor,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
-          child: Text(
-            'SAVE',
-            style: Theme.of(context).textTheme.headline5,
+            IconButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              icon: Icon(
+                Icons.arrow_back_rounded,
+                color: thirdColor,
+              ),
+              iconSize: 28,
+            ),
+            SizedBox(
+              height: height * 0.05,
+            ),
+            textFieldFunction(
+                width: width,
+                maxLine: 1,
+                maxLength: 30,
+                hintText: 'Task Name',
+                controller: titleController),
+            SizedBox(
+              height: height * 0.04,
+            ),
+            textFieldFunction(
+                width: width,
+                maxLine: 7,
+                hintText: 'Task Description',
+                controller: todoController),
+          ]),
+        ),
+        floatingActionButton: SizedBox(
+          width: width * 0.8,
+          height: height * 0.05,
+          child: FloatingActionButton(
+            onPressed: () {},
+            backgroundColor: orangeColor,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(100)),
+            child: Text(
+              'SAVE',
+              style: Theme.of(context).textTheme.headline5,
+            ),
           ),
         ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }

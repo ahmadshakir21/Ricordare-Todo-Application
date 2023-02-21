@@ -192,7 +192,7 @@ class _SignInScreenState extends State<SignInScreen> {
                               .headline6!
                               .copyWith(
                                   fontWeight: FontWeight.w600,
-                                  color: secondColor)),
+                                  color: orangeColor)),
                     ]),
               ),
             ],

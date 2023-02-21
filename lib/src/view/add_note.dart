@@ -40,14 +40,16 @@ class _AddNoteState extends State<AddNote> {
         .collection('myTasks')
         .doc(time.toString())
         .set(TaskModel(
+                taskID: time.toString(),
                 title: taskNameController.text,
                 description: taskDescriptionController.text,
-                time: DateFormat.yMMMEd().format(time))
-            .toMap());
+                time: DateFormat.yMMMd().format(time))
+            .toMap())
+        .then((value) => Navigator.of(context).pop());
 
     var snackBar = SnackBar(
       content: const Text('Successfully, You added your task'),
-      backgroundColor: secondColorLight,
+      backgroundColor: thirdColorLight,
     );
 
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -64,7 +66,7 @@ class _AddNoteState extends State<AddNote> {
             width: width * 0.9,
             child: TextField(
               controller: controller,
-              cursorColor: secondColor,
+              cursorColor: thirdColor,
               maxLines: maxLine,
               maxLength: maxLength,
               style: TextStyle(
@@ -72,14 +74,14 @@ class _AddNoteState extends State<AddNote> {
               ),
               decoration: InputDecoration(
                   hintText: hintText,
-                  hintStyle: TextStyle(color: secondColor.withOpacity(0.85)),
+                  hintStyle: TextStyle(color: thirdColor.withOpacity(0.65)),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: secondColor),
+                    borderSide: BorderSide(color: thirdColor),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: secondColor),
+                    borderSide: BorderSide(color: thirdColor),
                   ),
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10))),
@@ -105,7 +107,7 @@ class _AddNoteState extends State<AddNote> {
               },
               icon: Icon(
                 Icons.arrow_back_rounded,
-                color: secondColor,
+                color: thirdColor,
               ),
               iconSize: 28,
             ),
@@ -115,7 +117,7 @@ class _AddNoteState extends State<AddNote> {
             textFieldFunction(
                 width: width,
                 maxLine: 1,
-                maxLength: 35,
+                maxLength: 30,
                 hintText: 'Task Name',
                 controller: taskNameController),
             SizedBox(
@@ -135,7 +137,7 @@ class _AddNoteState extends State<AddNote> {
             onPressed: () {
               addTaskToFirebase();
             },
-            backgroundColor: secondColor,
+            backgroundColor: orangeColor,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(100)),
             child: Text(
