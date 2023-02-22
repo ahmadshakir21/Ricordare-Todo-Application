@@ -1,21 +1,33 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:todo_application/src/model/task_model.dart';
 import 'package:todo_application/src/style/app_style_color.dart';
 
 class UpdateNote extends StatefulWidget {
+  final TaskModel taskModel;
+  UpdateNote({required this.taskModel});
   @override
   State<UpdateNote> createState() => _UpdateNoteState();
 }
 
 class _UpdateNoteState extends State<UpdateNote> {
-  final TextEditingController titleController = TextEditingController();
-  final TextEditingController todoController = TextEditingController();
+  TextEditingController? titleController;
+  TextEditingController? todoController;
+
+  @override
+  void initState() {
+    titleController = TextEditingController(text: widget.taskModel.title);
+    todoController = TextEditingController(text: widget.taskModel.description);
+    super.initState();
+  }
 
   @override
   void dispose() {
-    titleController.dispose();
-    todoController.dispose();
+    titleController!.dispose();
+    todoController!.dispose();
     super.dispose();
   }
 
@@ -52,6 +64,28 @@ class _UpdateNoteState extends State<UpdateNote> {
             )));
   }
 
+  updateTaskAndSendItToFirebase() async {
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    User? user = firebaseAuth.currentUser;
+    String uid = user!.uid;
+    await FirebaseFirestore.instance
+        .collection('tasks')
+        .doc(uid)
+        .collection('myTasks')
+        .doc(widget.taskModel.taskID)
+        .update(TaskModel(
+                taskID: widget.taskModel.taskID,
+                title: titleController!.text,
+                description: todoController!.text,
+                time: widget.taskModel.time)
+            .toMap())
+        .then((value) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: const Text('Successfully, You updated your task'),
+              backgroundColor: thirdColorLight,
+            )))
+        .then((value) => Navigator.of(context).pop());
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -83,7 +117,7 @@ class _UpdateNoteState extends State<UpdateNote> {
                 maxLine: 1,
                 maxLength: 30,
                 hintText: 'Task Name',
-                controller: titleController),
+                controller: titleController!),
             SizedBox(
               height: height * 0.04,
             ),
@@ -91,19 +125,21 @@ class _UpdateNoteState extends State<UpdateNote> {
                 width: width,
                 maxLine: 7,
                 hintText: 'Task Description',
-                controller: todoController),
+                controller: todoController!),
           ]),
         ),
         floatingActionButton: SizedBox(
           width: width * 0.8,
           height: height * 0.05,
           child: FloatingActionButton(
-            onPressed: () {},
+            onPressed: () {
+              updateTaskAndSendItToFirebase();
+            },
             backgroundColor: orangeColor,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(100)),
             child: Text(
-              'SAVE',
+              'UPDATE',
               style: Theme.of(context).textTheme.headline5,
             ),
           ),

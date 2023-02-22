@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class TaskModel {
-  String taskID;
+  String? taskID;
   String? title;
   String? description;
   String? time;
 
-  TaskModel({required this.taskID, this.title, this.description, this.time});
+  TaskModel({this.taskID, this.title, this.description, this.time});
 
   Map<String, dynamic> toMap() {
     return {

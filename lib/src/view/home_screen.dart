@@ -160,7 +160,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                   onTap: () {
                                     Navigator.of(context)
                                         .push(MaterialPageRoute(
-                                      builder: (context) => UpdateNote(),
+                                      builder: (context) => UpdateNote(
+                                          taskModel: TaskModel(
+                                              taskID: myDocs[index]['taskID'],
+                                              title: myDocs[index]['title'],
+                                              description: myDocs[index]
+                                                  ['description'],
+                                              time: myDocs[index]['time'])),
                                     ));
                                   },
                                   child: Container(
