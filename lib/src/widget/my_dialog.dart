@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:todo_application/src/style/app_style_color.dart';
 
 class MyDialog extends StatelessWidget {
+  String content;
   VoidCallback onPressed;
 
-  MyDialog({required this.onPressed});
+  MyDialog({required this.content, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +35,7 @@ class MyDialog extends StatelessWidget {
                     height: height * 0.01,
                   ),
                   Text(
-                    "Are you Sure want to delete this task?",
+                    content,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.headline5!.copyWith(
                         fontWeight: FontWeight.w600, color: thirdColor),

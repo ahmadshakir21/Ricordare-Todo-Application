@@ -19,7 +19,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final user = FirebaseAuth.instance.currentUser!;
+  User? user = FirebaseAuth.instance.currentUser;
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   final GlobalKey<ScaffoldState> _key = GlobalKey();
@@ -31,9 +31,16 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           menuItem('Profile', Icons.account_circle_sharp, () {}),
           menuItem('Logout', Icons.logout, () {
-            _firebaseAuth
-                .signOut()
-                .then((value) => Navigator.of(context).pop());
+            showDialog(
+              context: context,
+              builder: (context) => MyDialog(
+                  content: 'Are you sure want to Logout?',
+                  onPressed: () {
+                    _firebaseAuth
+                        .signOut()
+                        .then((value) => Navigator.of(context).pop());
+                  }),
+            );
           })
         ],
       ),
@@ -123,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 StreamBuilder<QuerySnapshot>(
                     stream: FirebaseFirestore.instance
                         .collection('tasks')
-                        .doc(user.uid)
+                        .doc(user!.uid)
                         .collection('myTasks')
                         .snapshots(),
                     builder: (BuildContext context,
@@ -201,11 +208,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     context: context,
                                                     builder: (context) =>
                                                         MyDialog(
+                                                      content:
+                                                          'Are you sure want to delete this task?',
                                                       onPressed: () async {
                                                         await FirebaseFirestore
                                                             .instance
                                                             .collection('tasks')
-                                                            .doc(user.uid)
+                                                            .doc(user!.uid)
                                                             .collection(
                                                                 'myTasks')
                                                             .doc(myDocs[index]
