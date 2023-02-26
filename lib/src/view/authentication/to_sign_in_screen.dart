@@ -43,7 +43,7 @@ class ToSignInScreen extends StatelessWidget {
             child: Align(
                 alignment: Alignment.topLeft,
                 child: Text(
-                  "Lind",
+                  "Ricordare",
                   style: Theme.of(context)
                       .textTheme
                       .headline1!
@@ -56,7 +56,7 @@ class ToSignInScreen extends StatelessWidget {
               alignment: Alignment.topLeft,
               child: Container(
                 height: height * 0.009,
-                width: width * 0.13,
+                width: width * 0.3,
                 color: orangeColor,
               ),
             ),
