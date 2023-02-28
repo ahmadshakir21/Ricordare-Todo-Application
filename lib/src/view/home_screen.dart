@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +25,9 @@ class _HomeScreenState extends State<HomeScreen> {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   final GlobalKey<ScaffoldState> _key = GlobalKey();
+
+  // final Key key;
+  final List<Color> colors = [hotPink, cream, spearmint, rosewater];
 
   Widget myDrawerList() {
     return Container(
@@ -94,11 +99,18 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.only(top: 20),
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Container(
-                margin: const EdgeInsets.only(bottom: 10),
-                height: height * 0.13,
-                decoration:
-                    BoxDecoration(shape: BoxShape.circle, color: mainColor),
+              Stack(
+                alignment: Alignment.bottomCenter,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 10),
+                    height: height * 0.13,
+                    decoration:
+                        BoxDecoration(shape: BoxShape.circle, color: mainColor),
+                  ),
+                  IconButton(
+                      onPressed: () {}, icon: Icon(Icons.add_box_rounded))
+                ],
               ),
               // Text(userTodoModel.name!),
               // Text(userTodoModel.email!),
@@ -116,13 +128,25 @@ class _HomeScreenState extends State<HomeScreen> {
                 SizedBox(
                   height: height * 0.01,
                 ),
-                IconButton(
-                  onPressed: () {
-                    _key.currentState!.openDrawer();
-                  },
-                  icon: const Icon(Icons.menu_rounded),
-                  iconSize: 28,
-                  color: thirdColor,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        _key.currentState!.openDrawer();
+                      },
+                      icon: const Icon(Icons.menu_rounded),
+                      iconSize: 28,
+                      color: thirdColor,
+                    ),
+                    Container(
+                      height: height * 0.052,
+                      width: width * 0.1,
+                      decoration: BoxDecoration(
+                          color: spearmint,
+                          borderRadius: BorderRadius.circular(10)),
+                    ),
+                  ],
                 ),
                 SizedBox(
                   height: height * 0.025,
@@ -155,125 +179,164 @@ class _HomeScreenState extends State<HomeScreen> {
 
                       final myDocs = snapshot.data!.docs;
 
+                      final random = Random();
+                      final color = colors[random.nextInt(colors.length)];
+
                       return Container(
                         height: height * 0.8,
-                        child: ListView.builder(
-                          itemCount: myDocs.length,
-                          itemBuilder: (context, index) {
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(context)
-                                        .push(MaterialPageRoute(
-                                      builder: (context) => UpdateNote(
-                                          taskModel: TaskModel(
-                                              taskID: myDocs[index]['taskID'],
-                                              title: myDocs[index]['title'],
-                                              description: myDocs[index]
-                                                  ['description'],
-                                              time: myDocs[index]['time'])),
-                                    ));
-                                  },
-                                  child: Container(
-                                    width: width * 1,
-                                    decoration: BoxDecoration(
-                                        color: thirdColorLight,
-                                        borderRadius: BorderRadius.circular(7)),
-                                    padding: const EdgeInsets.all(10),
-                                    margin: const EdgeInsets.all(10),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              myDocs[index]['title'],
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .headline6!
-                                                  .copyWith(
-                                                      color: mainColorLight,
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w600),
-                                            ),
-                                            IconButton(
-                                                onPressed: () {
-                                                  showDialog(
-                                                    context: context,
-                                                    builder: (context) =>
-                                                        MyDialog(
-                                                      content:
-                                                          'Are you sure want to delete this task?',
-                                                      onPressed: () async {
-                                                        await FirebaseFirestore
-                                                            .instance
-                                                            .collection('tasks')
-                                                            .doc(user!.uid)
-                                                            .collection(
-                                                                'myTasks')
-                                                            .doc(myDocs[index]
-                                                                ['taskID'])
-                                                            .delete()
-                                                            .then((value) =>
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop())
-                                                            .then((value) =>
-                                                                ScaffoldMessenger.of(
-                                                                        context)
-                                                                    .showSnackBar(
-                                                                        SnackBar(
-                                                                  content:
-                                                                      const Text(
-                                                                          'You deleted your task'),
-                                                                  backgroundColor:
-                                                                      thirdColorLight,
-                                                                )));
-                                                      },
-                                                    ),
-                                                  );
-                                                },
-                                                icon: Icon(
-                                                  Icons.delete,
-                                                  color: redColor,
-                                                )),
-                                          ],
-                                        ),
-                                        Text(
-                                          myDocs[index]['time'],
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .headline6!
-                                              .copyWith(
-                                                  color: mainColorLight
-                                                      .withOpacity(0.75),
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w500),
-                                        ),
-                                        SizedBox(
-                                          height: height * 0.045,
-                                        ),
-                                        Text(
-                                          myDocs[index]['description'],
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .headline6!
-                                              .copyWith(color: mainColorLight),
-                                        )
-                                      ],
+                        child: myDocs.isEmpty
+                            ? Padding(
+                                padding: const EdgeInsets.all(20),
+                                child: Column(
+                                  children: [
+                                    SizedBox(
+                                      height: height * 0.05,
                                     ),
-                                  ),
+                                    Text(
+                                      'Add your task',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headline2!
+                                          .copyWith(color: thirdColor),
+                                    ),
+                                    SizedBox(
+                                      height: height * 0.03,
+                                    ),
+                                    Image.asset('assets/4905797.png'),
+                                  ],
                                 ),
-                              ],
-                            );
-                          },
-                        ),
+                              )
+                            : ListView.builder(
+                                itemCount: myDocs.length,
+                                itemBuilder: (context, index) {
+                                  return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.of(context)
+                                              .push(MaterialPageRoute(
+                                            builder: (context) => UpdateNote(
+                                                taskModel: TaskModel(
+                                                    taskID: myDocs[index]
+                                                        ['taskID'],
+                                                    title: myDocs[index]
+                                                        ['title'],
+                                                    description: myDocs[index]
+                                                        ['description'],
+                                                    time: myDocs[index]
+                                                        ['time'])),
+                                          ));
+                                        },
+                                        child: Container(
+                                          width: width * 1,
+                                          decoration: BoxDecoration(
+                                              color: spearmint,
+                                              borderRadius:
+                                                  BorderRadius.circular(7)),
+                                          padding: const EdgeInsets.all(10),
+                                          margin: const EdgeInsets.all(10),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    myDocs[index]['title'],
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headline6!
+                                                        .copyWith(
+                                                            color:
+                                                                thirdColorLight,
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w600),
+                                                  ),
+                                                  IconButton(
+                                                      onPressed: () {
+                                                        showDialog(
+                                                          context: context,
+                                                          builder: (context) =>
+                                                              MyDialog(
+                                                            content:
+                                                                'Are you sure want to delete this task?',
+                                                            onPressed:
+                                                                () async {
+                                                              await FirebaseFirestore
+                                                                  .instance
+                                                                  .collection(
+                                                                      'tasks')
+                                                                  .doc(
+                                                                      user!.uid)
+                                                                  .collection(
+                                                                      'myTasks')
+                                                                  .doc(myDocs[
+                                                                          index]
+                                                                      [
+                                                                      'taskID'])
+                                                                  .delete()
+                                                                  .then((value) =>
+                                                                      Navigator.of(
+                                                                              context)
+                                                                          .pop())
+                                                                  .then((value) =>
+                                                                      ScaffoldMessenger.of(
+                                                                              context)
+                                                                          .showSnackBar(
+                                                                              SnackBar(
+                                                                        content:
+                                                                            const Text('You deleted your task'),
+                                                                        backgroundColor:
+                                                                            thirdColorLight,
+                                                                      )));
+                                                            },
+                                                          ),
+                                                        );
+                                                      },
+                                                      icon: Icon(
+                                                        Icons.delete,
+                                                        color: redColor,
+                                                      )),
+                                                ],
+                                              ),
+                                              Text(
+                                                myDocs[index]['time'],
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .headline6!
+                                                    .copyWith(
+                                                        color: thirdColor
+                                                            .withOpacity(0.75),
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.w500),
+                                              ),
+                                              SizedBox(
+                                                height: height * 0.045,
+                                              ),
+                                              Text(
+                                                myDocs[index]['description'],
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .headline6!
+                                                    .copyWith(
+                                                        color: thirdColor),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ),
                       );
                     }),
               ],
